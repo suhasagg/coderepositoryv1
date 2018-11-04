@@ -1,0 +1,96 @@
+package com.cuberoot.util;
+
+
+import com.websystique.springmvc.model.Reports;
+
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Utility for converting ResultSets into some Output formats
+ * @author Suhas
+ */
+public class Populator {
+    /**
+     * Convert a result set into a JSON Array
+     * @param resultSet
+     * @return a JSONArray
+     * @throws Exception
+     */
+    public static List<Reports> populateDTO(ResultSet resultSet)
+            throws Exception {
+       
+    	   List<Reports> report = new ArrayList<Reports>();
+           Reports reportDTO = null;
+    	   String name;
+           while (resultSet.next()) {
+        	int total_rows = resultSet.getMetaData().getColumnCount();
+            Reports obj = new Reports();
+            for (int i = 0; i < total_rows; i++) {
+               name = resultSet.getMetaData().getColumnLabel(i + 1).toLowerCase();
+               if( name.equals("impression"))
+                obj.setImpressions(resultSet.getObject(i + 1).toString());
+               
+            
+               if( name.equals("date"))
+            	 obj.setDate(resultSet.getObject(i + 1).toString());
+            
+               if( name.equals("campaign_id"))
+            	  obj.setCampaign_id(resultSet.getObject(i + 1).toString());
+            
+              if( name.equals("channel"))   
+            	   obj.setChannel(resultSet.getObject(i + 1).toString());
+            
+            
+              if( name.equals("clicks"))
+                  obj.setClicks(resultSet.getObject(i + 1).toString());
+                 
+            
+              if( name.equals("conversions"))
+                  obj.(resultSet.getObject(i + 1).toString());
+                
+             
+              if( name.equals("cost"))
+                  obj.(resultSet.getObject(i + 1).toString());
+                 
+            
+              if( name.equals("audience_segment"))
+                  obj.setAudience_segment(resultSet.getObject(i + 1).toString());
+              
+              if( name.equals(""))
+                  obj.setCity(resultSet.getObject(i + 1).toString());
+              
+              if( name.equals("device_type"))
+                  obj.setDevice_type(resultSet.getObject(i + 1).toString());  
+            
+            
+            
+            }
+            report.add(obj);
+        
+        }
+        return report;
+    }
+    /**
+     * Convert a result set into a XML List
+     * @param resultSet
+     * @return a XML String with list elements
+     * @throws Exception if something happens
+     */
+    public static String convertToXML(ResultSet resultSet)
+            throws Exception {
+        StringBuffer xmlArray = new StringBuffer("<results>");
+        while (resultSet.next()) {
+            int total_rows = resultSet.getMetaData().getColumnCount();
+            xmlArray.append("<result ");
+            for (int i = 0; i < total_rows; i++) {
+                xmlArray.append(" " + resultSet.getMetaData().getColumnLabel(i + 1)
+                        .toLowerCase() + "='" + resultSet.getObject(i + 1) + "'"); }
+            xmlArray.append(" />");
+        }
+        xmlArray.append("</results>");
+        return xmlArray.toString();
+    }
+    
+}

@@ -1,0 +1,13 @@
+package com.websystique.springmvc.service;
+
+import java.util.List;
+
+import com.cuberoot.springmvc.model.Reports;
+
+
+
+public interface ReportService {
+	
+	List<Reports> extractReports(long id, String dateRange);
+	
+}

@@ -59,9 +59,10 @@ import com.websystique.springmvc.model.UserData;
 	        data.setEmail_id(emailid);
 	    	byte[] serialiseddata = LevelDBUtil.serialize(data);
 		    String uuid = UUIDGenerator.generate(data.getEmail_id());
-		    if(operation.equals("1"))
+		    if(operation.equals("1")){
 		    batch.put(uuid.getBytes(),serialiseddata);
-		    
+		    batch.put(emailid.getBytes(),uuid.getBytes());
+		    }
 		    if(operation.equals("2"))
 		    batch.delete(uuidfordeletion.getBytes());	
 	 

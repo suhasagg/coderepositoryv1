@@ -1,0 +1,96 @@
+package com.websystique.springmvc.model;
+
+public class Reports {
+
+	private String date;
+	
+	public String getDate() {
+		return date;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
+	}
+
+	public String getCampaign_id() {
+		return campaign_id;
+	}
+
+	public void setCampaign_id(String campaign_id) {
+		this.campaign_id = campaign_id;
+	}
+
+	public String getImpressions() {
+		return impressions;
+	}
+
+	public void setImpressions(String impressions) {
+		this.impressions = impressions;
+	}
+
+	public String getClicks() {
+		return clicks;
+	}
+
+	public void setClicks(String clicks) {
+		this.clicks = clicks;
+	}
+
+	public String getChannel() {
+		return channel;
+	}
+
+	public void setChannel(String channel) {
+		this.channel = channel;
+	}
+
+	public String getAudience_segment() {
+		return audience_segment;
+	}
+
+	public void setAudience_segment(String audience_segment) {
+		this.audience_segment = audience_segment;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getOs() {
+		return os;
+	}
+
+	public void setOs(String os) {
+		this.os = os;
+	}
+
+	public String getDevice_type() {
+		return device_type;
+	}
+
+	public void setDevice_type(String device_type) {
+		this.device_type = device_type;
+	}
+
+	private String campaign_id;
+	
+	private String impressions;;
+	
+	private String clicks;
+	
+	private String channel;
+	
+	private String audience_segment;
+	
+	private String city;
+	
+	private String os;
+	
+	private String device_type;
+
+	
+}

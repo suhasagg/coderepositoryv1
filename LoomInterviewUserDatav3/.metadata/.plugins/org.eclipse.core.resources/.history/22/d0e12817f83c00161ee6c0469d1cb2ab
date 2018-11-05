@@ -1,0 +1,47 @@
+package com.websystique.springmvc.service;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+
+import com.websystique.springmvc.model.Reports;
+
+@Service("reportService")
+@Transactional
+public class ReportServiceImpl implements ReportService{
+	
+	private static final AtomicLong counter = new AtomicLong();
+	
+	ReportDAOImpl repDAO = ReportDAOImpl.getInstance();
+	
+	List<Reports> report= new ArrayList<Reports>();
+	
+    public List<Reports> extractReports(long id,String dateRange){
+	
+        String [] dateInterval = dateRange.split(",");
+    	
+    	
+    	if(id == 1){
+    	 	report=repDAO.FetchImpressionsData(dateInterval[0], dateInterval[1]);
+		    return report;
+    	}
+        
+         return report;
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    }
+		
+}

@@ -74,7 +74,7 @@ public class ReportDAOImpl {
 		try {
 			DBConnector obj = new DBConnector();
 			levelDBStore = obj.getPooledConnection();
-			data=levelDBStore.get(uuid.getBytes());
+			data=levelDBStore.get(LevelDBUtil.serialize(uuid));
 			userdata = (UserData)LevelDBUtil.deserialize(data);
 
 		} catch (Exception e) {
@@ -112,7 +112,7 @@ public class ReportDAOImpl {
 			DBConnector obj = new DBConnector();
 			levelDBStore = obj.getPooledConnection();
 			
-			datafirstfetch=levelDBStore.get(emailid.getBytes());
+			datafirstfetch=levelDBStore.get(LevelDBUtil.serialize(emailid));
 			datasecondfetch=levelDBStore.get(datafirstfetch);
 			userdata = (UserData)LevelDBUtil.deserialize(datasecondfetch);
 
@@ -153,9 +153,9 @@ public class ReportDAOImpl {
 			serialiseddata = LevelDBUtil.serialize(data);
 			uuid = UUIDGenerator.generate(data.getEmail_id());
 		    //Primary Index for LevelDB
-			levelDBStore.put(uuid.getBytes(),serialiseddata);
+			levelDBStore.put(LevelDBUtil.serialize(uuid),serialiseddata);
 		   //Secondary Index for LevelDB
-			levelDBStore.put(data.getEmail_id().getBytes(),uuid.getBytes());
+			levelDBStore.put(LevelDBUtil.serialize(data.getEmail_id()),LevelDBUtil.serialize(uuid));
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -177,7 +177,7 @@ public class ReportDAOImpl {
 
 	public List<String> BatchUploadUserData(String filepath) throws IOException{
 		 try {
-		     System.setOut(new PrintStream(new File("TagCleaner2.txt")));
+		     System.setOut(new PrintStream(new File("BatchLog.txt")));
 		    } catch (Exception e) {
 		         e.printStackTrace();
 		    }
@@ -191,6 +191,7 @@ public class ReportDAOImpl {
 	 	byte [] serialiseddata = null;
 		String uuid = null;
 		WriteBatch batch = levelDBStore.createWriteBatch();
+		
 		ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()-1);
 		
 		FileInputStream fstream = new FileInputStream(filepath);
@@ -203,19 +204,28 @@ public class ReportDAOImpl {
         
         while ((strLine = br.readLine()) != null)   {
 		  // Print the content on the console
-		if(counter < 10000){
 		
+        	
+        	
+        if(counter < 10000){
+		if(strLine !=null){
         tasklist.add(new WorkerThread(strLine,batch));     
 		counter++;	
-       
+		}
 		
 		
 		}	
 		else{
         	
         	counter = 0;
-        	batch = levelDBStore.createWriteBatch();
+        
         	List<Future<String>> userIds = executor.invokeAll(tasklist);
+
+        	levelDBStore.write(batch);
+        	batch.close();
+        	
+        	
+        	
         	tasklist.clear();
         	for (int i = 0; i < userIds.size(); i++)
      	    {
@@ -231,17 +241,25 @@ public class ReportDAOImpl {
      	    } 	
      	 
         	 System.out.println("Processed Batch of Size :"+userIds.size());
-        	 batch.close();
+        	// levelDBStore = obj.getPooledConnection();
+        	 batch = levelDBStore.createWriteBatch();
 		}
        
+        
+        
         }
         
         if(counter < 10000){
         	
            
         	counter = 0;
-        	batch = levelDBStore.createWriteBatch();
+        	
         	List<Future<String>> userIds = executor.invokeAll(tasklist);
+        	
+        	levelDBStore.write(batch);
+        	batch.close();
+            
+        	
         	tasklist.clear();
         	for (int i = 0; i < userIds.size(); i++)
      	    {
@@ -259,17 +277,18 @@ public class ReportDAOImpl {
         }
         
         	 System.out.println("Processed Batch of Size :"+userIds.size());
-        	 batch.close();
-        
+        	// levelDBStore = obj.getPooledConnection();
+        	 batch = levelDBStore.createWriteBatch();
         } 
         
 	    } 
         catch(Exception e){
         	
+        	e.printStackTrace();
         }
              
 		finally{
-			
+			batch.close();
 			levelDBStore.close();
 			executor.shutdown();
 			
